@@ -1,5 +1,7 @@
+import cv2
+import numpy as np
 import requests
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 from io import BytesIO
 import pytesseract
 
@@ -15,12 +17,12 @@ def download_image(img_url):
 
 def preproccess_imgage(img):
     try:
-        # Convert image to grayscale
         img = img.convert('L')
-        # Enhance contrast
-        img = ImageEnhance.Contrast(img).enhance(2)
-        # Apply filter tto sharpen the image
-        img = img.filter(ImageFilter.SHARPEN)
+
+        img = ImageEnhance.Contrast(img).enhance(3)
+
+        img = ImageEnhance.Contrast(img).enhance(6)
+
         return img
     except Exception as err:
         print(err)
@@ -40,6 +42,7 @@ def extract_text_from_url(img_url):
         return "Failed to download and process the image"
     img = preproccess_imgage(img)
     return extract_text_from_image(img)
+
 
 def main():
     img_url = input("Enter image URL: ")
