@@ -38,7 +38,7 @@ def preprocess_image(img, local_file=False):
             if word != "":
                 h = image_data['height'][i]
                 if h < min_h:
-                    min_h = h          
+                    min_h = h  
         resize_factor = 64 // min_h
         img_np = cv2.resize(img_np, (img_np.shape[1] * resize_factor, img_np.shape[0] * resize_factor), interpolation = cv2.INTER_LINEAR) 
 
@@ -55,12 +55,22 @@ def preprocess_image(img, local_file=False):
         #     for j in range(w):
         #         img_tmp[i, j] = np.average([img_np[i, j, 0], img_np[i, j, 1], img_np[i, j, 2]])
         img_np = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
-        # Image.fromarray(cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)).show(title="old")
         # img_np = img_tmp.astype('uint8')
-        # Image.fromarray(img_np).show(title="new")
-        
+        # Image.fromarray(img_np).show()
+
         # Remove noise
         img_np = cv2.medianBlur(img_np, 3)
+
+        # contours, hierarchy = cv2.findContours(img_np, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        # im2 = img_np.copy()
+        # for cnt in contours:
+        #     x, y, w, h = cv2.boundingRect(cnt)
+            
+        #     # Drawing a rectangle on copied image
+        #     cv2.rectangle(im2, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        # cv2.imshow("window", im2)
+        # cv2.waitKey(0)
 
         _, img_np = cv2.threshold(img_np, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
@@ -133,7 +143,7 @@ def extract_text_from_file(file_path):
 
 def main():
     # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    pytesseract.pytesseract.tesseract_cmd = r'D:\Aplikacje\Tesseract\tesseract.exe'
+    # pytesseract.pytesseract.tesseract_cmd = r'D:\Aplikacje\Tesseract\tesseract.exe'
 
     if len(sys.argv) > 1:
         try:
