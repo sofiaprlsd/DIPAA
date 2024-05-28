@@ -1,10 +1,15 @@
 import requests
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps  
 from io import BytesIO
 import pytesseract
 import numpy as np
 import cv2
 import sys
+import skimage.io
+import matplotlib.pyplot as plt
+
+from skimage import exposure
+
 
 def download_image(img_url):
     try:
@@ -24,6 +29,7 @@ def preprocess_image(img, local_file=False):
         img = ImageEnhance.Contrast(img).enhance(2)
 
         img = img.filter(ImageFilter.SHARPEN)
+        img =  ImageOps.equalize(img, mask = None)
 
         # Convert to numpy array for processing with OpenCV
         img_np = np.array(img)
@@ -45,6 +51,8 @@ def preprocess_image(img, local_file=False):
         
         # Convert back to PIL Image
         img = Image.fromarray(img_np)
+
+        img.show()
 
         return img
     except Exception as err:
