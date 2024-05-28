@@ -8,3 +8,6 @@ book_page;https://futurebook.mit.edu/wp-content/uploads/2012/04/GoogleBooksScan.
 colors;https://i.pinimg.com/736x/c4/bc/be/c4bcbec007479c837c15ec1d592e7318.jpg
 multi_col;https://sharelatex-wiki-cdn-671420.c.cdn77.org/learn-scripts/images/b/bc/MultiCol1OL.png
 white_text_black_background;http://uxmovement.com/wp-content/uploads/2018/05/pure_black-dark_gray-background.png
+nightmare;https://flat-icons.com/wp-content/uploads/2021/03/Graphic-Design-Is-My-Passion.jpg
+rainbow;https://community.adobe.com/legacyfs/online/1133682_Rainbow-1.jpg
+blured;https://www.versluis.com/wp-content/uploads/2015/03/Screen-Shot-2015-03-22-at-18.36.22.png

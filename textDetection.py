@@ -64,8 +64,6 @@ def preprocess_image(img, local_file=False):
         img = Image.fromarray(img_np)
         img.show()
 
-        img.show()
-
         return img
     except Exception as err:
         print(err)
@@ -116,9 +114,13 @@ def extract_text_from_file(file_path):
         return "Failed to process the image file"
 
 def main():
-    pytesseract.pytesseract.tesseract_cmd = r'D:\Aplikacje\Tesseract\tesseract.exe'
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
     if len(sys.argv) > 1:
+        
+        print(extract_text_from_file("images/nearly_black.png"))
+        return
+
         try:
             f = open("data.txt", "r")
             data = []
