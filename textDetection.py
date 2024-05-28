@@ -37,7 +37,16 @@ def preprocess_image(img, local_file=False):
         _, img_np[2] = cv2.threshold(img_np[2], 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
         # Convert to grayscale image
-        img_np = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
+        h = len(img_np)
+        w = len(img_np[0])
+        img_tmp = np.zeros((h, w))
+        for i in range(h):
+            for j in range(w):
+                img_tmp[i, j] = np.average([img_np[i, j, 0], img_np[i, j, 1], img_np[i, j, 2]])
+        # img_np = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
+        # Image.fromarray(cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)).show(title="old")
+        img_np = img_tmp.astype('uint8')
+        # Image.fromarray(img_np).show(title="new")
         
         # Remove noise
         img_np = cv2.medianBlur(img_np, 3)
@@ -74,7 +83,7 @@ def calculate_rotation_angle(img_np):
         
         if lines is not None:
             angles = []
-            for rho, theta in lines[:, 0]:
+            for _, theta in lines[:, 0]:
                 angle = np.degrees(theta) - 90
                 angles.append(angle)
 
@@ -112,22 +121,20 @@ def extract_text_from_file(file_path):
         return "Failed to process the image file"
 
 def main():
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    pytesseract.pytesseract.tesseract_cmd = r'D:\Aplikacje\Tesseract\tesseract.exe'
 
     if len(sys.argv) > 1:
-        
-        print(extract_text_from_file("images/nearly_black.png"))
-        return
-
         try:
             f = open("data.txt", "r")
             data = []
 
-            for i in range(int(sys.argv[1])+1):
+            # for _ in range(int(sys.argv[1])+1):
+            for _ in range(13):
                 data = f.readline().split(";")
 
-            img_url = data[1].strip()
-            print(extract_text_from_url(img_url))
+                img_url = data[1].strip()
+                print(extract_text_from_url(img_url))
         except:
             print("wrong parameter")
     else:
