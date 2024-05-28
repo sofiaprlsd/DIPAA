@@ -5,11 +5,7 @@ import pytesseract
 import numpy as np
 import cv2
 import sys
-import skimage.io
 import matplotlib.pyplot as plt
-
-from skimage import exposure
-
 
 def download_image(img_url):
     try:
@@ -30,13 +26,10 @@ def preprocess_image(img, local_file=False):
         img = ImageEnhance.Contrast(img).enhance(2)
 
         img = img.filter(ImageFilter.SHARPEN)
-        img =  ImageOps.equalize(img, mask = None)
+        # img =  ImageOps.equalize(img, mask = None)
 
         # Convert to numpy array for processing with OpenCV
         img_np = np.array(img)
-
-        # Remove noise
-        img_np = cv2.medianBlur(img_np, 3)
 
         # Threshold every channel
         _, img_np[0] = cv2.threshold(img_np[0], 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -45,6 +38,11 @@ def preprocess_image(img, local_file=False):
 
         # Convert to grayscale image
         img_np = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
+        
+        # Remove noise
+        img_np = cv2.medianBlur(img_np, 3)
+
+        _, img_np = cv2.threshold(img_np, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
         # Enhancing edges
         kernel = np.ones((1,1), np.uint8)
@@ -62,8 +60,6 @@ def preprocess_image(img, local_file=False):
         
         # Convert back to PIL Image
         img = Image.fromarray(img_np)
-        img.show()
-
         img.show()
 
         return img
