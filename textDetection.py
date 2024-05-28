@@ -19,7 +19,7 @@ def download_image(img_url):
 def preprocess_image(img, local_file=False):
     try:
         # Convert image to grayscale
-        # img = img.convert('L')
+        img = img.convert('RGB')
         
         # Increase contrast
         img = ImageEnhance.Contrast(img).enhance(2)
