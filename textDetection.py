@@ -20,6 +20,7 @@ def preprocess_image(img, local_file=False):
         # Convert image to grayscale
         img = img.convert('L')
         
+        # Increase contrast
         img = ImageEnhance.Contrast(img).enhance(2)
 
         img = img.filter(ImageFilter.SHARPEN)
@@ -31,6 +32,10 @@ def preprocess_image(img, local_file=False):
         
         # Remove noise
         img_np = cv2.medianBlur(img_np, 3)
+
+        # Enhancing edges
+        kernel = np.ones((1,1), np.uint8)
+        img_np = cv2.dilate(img_np, kernel, iterations=1)
 
         if local_file == True:
             # Calculate rotation angle
@@ -44,6 +49,7 @@ def preprocess_image(img, local_file=False):
         
         # Convert back to PIL Image
         img = Image.fromarray(img_np)
+        img.show()
 
         return img
     except Exception as err:
