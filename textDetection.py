@@ -15,7 +15,7 @@ def download_image(img_url):
         print(err)
         return None
 
-def preprocess_image(img):
+def preprocess_image(img, local_file=False):
     try:
         # Convert image to grayscale
         img = img.convert('L')
@@ -31,6 +31,16 @@ def preprocess_image(img):
         
         # Remove noise
         img_np = cv2.medianBlur(img_np, 3)
+
+        if local_file == True:
+            # Calculate rotation angle
+            angle = calculate_rotation_angle(img_np)
+
+            # Rotate image to correct the orientation
+            (h, w) = img_np.shape[:2]
+            center = (w // 2, h // 2)
+            M = cv2.getRotationMatrix2D(center, angle, 1.0)
+            img_np = cv2.warpAffine(img_np, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
         
         # Convert back to PIL Image
         img = Image.fromarray(img_np)
@@ -40,10 +50,30 @@ def preprocess_image(img):
         print(err)
         return img  # return original image if process fails
 
+def calculate_rotation_angle(img_np):
+    try:
+        edges = cv2.Canny(img_np, 50, 150, apertureSize=3)
+        lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
+        
+        if lines is not None:
+            angles = []
+            for rho, theta in lines[:, 0]:
+                angle = np.degrees(theta) - 90
+                angles.append(angle)
+
+            # Calculate median angle
+            median_angle = np.median(angles)
+            return median_angle
+        return 0
+    except Exception as err:
+        print(err)
+        return 0
+
 def extract_text_from_image(img):
     try:
         # Perform OCR using Tesseract
-        return pytesseract.image_to_string(img)  # return text
+        custom_config = r'--oem 3 --psm 6'
+        return pytesseract.image_to_string(img, config=custom_config)  # return text
     except Exception as err:
         print(err)
         return ""
@@ -58,7 +88,7 @@ def extract_text_from_url(img_url):
 def extract_text_from_file(file_path):
     try:
         img = Image.open(file_path)
-        img = preprocess_image(img)
+        img = preprocess_image(img, True)
         return extract_text_from_image(img)
     except Exception as err:
         print(err)
