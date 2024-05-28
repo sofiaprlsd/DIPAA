@@ -19,7 +19,7 @@ def download_image(img_url):
 def preprocess_image(img, local_file=False):
     try:
         # Convert image to grayscale
-        img = img.convert('L')
+        # img = img.convert('L')
         
         # Increase contrast
         img = ImageEnhance.Contrast(img).enhance(2)
@@ -29,10 +29,16 @@ def preprocess_image(img, local_file=False):
         # Convert to numpy array for processing with OpenCV
         img_np = np.array(img)
 
-        _, img_np = cv2.threshold(img_np, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        
         # Remove noise
         img_np = cv2.medianBlur(img_np, 3)
+
+        # Threshold every channel
+        _, img_np[0] = cv2.threshold(img_np[0], 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        _, img_np[1] = cv2.threshold(img_np[1], 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        _, img_np[2] = cv2.threshold(img_np[2], 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+        # Convert to grayscale image
+        img_np = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
 
         # Enhancing edges
         kernel = np.ones((1,1), np.uint8)
@@ -102,7 +108,7 @@ def extract_text_from_file(file_path):
         return "Failed to process the image file"
 
 def main():
-    pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+    pytesseract.pytesseract.tesseract_cmd = r'D:\Aplikacje\Tesseract\tesseract.exe'
 
     if len(sys.argv) > 1:
         try:
