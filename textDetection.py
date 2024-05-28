@@ -31,6 +31,9 @@ def preprocess_image(img, local_file=False):
         # Convert to numpy array for processing with OpenCV
         img_np = np.array(img)
 
+        # Resize for better result quality
+        img_np = cv2.resize(img_np, (img_np.shape[1] * 4, img_np.shape[0] * 4), interpolation = cv2.INTER_LINEAR) 
+
         # Threshold every channel
         _, img_np[0] = cv2.threshold(img_np[0], 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
         _, img_np[1] = cv2.threshold(img_np[1], 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -121,20 +124,20 @@ def extract_text_from_file(file_path):
         return "Failed to process the image file"
 
 def main():
-    # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    pytesseract.pytesseract.tesseract_cmd = r'D:\Aplikacje\Tesseract\tesseract.exe'
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    # pytesseract.pytesseract.tesseract_cmd = r'D:\Aplikacje\Tesseract\tesseract.exe'
 
     if len(sys.argv) > 1:
         try:
             f = open("data.txt", "r")
             data = []
 
-            # for _ in range(int(sys.argv[1])+1):
-            for _ in range(13):
+            for _ in range(int(sys.argv[1])+1):
+            # for _ in range(13):
                 data = f.readline().split(";")
 
-                img_url = data[1].strip()
-                print(extract_text_from_url(img_url))
+            img_url = data[1].strip()
+            print(extract_text_from_url(img_url))
         except:
             print("wrong parameter")
     else:
