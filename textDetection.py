@@ -4,6 +4,7 @@ from io import BytesIO
 import pytesseract
 import numpy as np
 import cv2
+import sys
 
 def download_image(img_url):
     try:
@@ -101,15 +102,30 @@ def extract_text_from_file(file_path):
         return "Failed to process the image file"
 
 def main():
-    choice = input("Press 1 to process an image from a URL or 2 to process a local image file: ").strip().lower()
-    if choice == '1':
-        img_url = input("Enter image URL: ").strip()
-        print(extract_text_from_url(img_url))
-    elif choice == '2':
-        file_path = input("Enter the local image file path: ").strip()
-        print(extract_text_from_file(file_path))
+    pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+
+    if len(sys.argv) > 1:
+        try:
+            f = open("data.txt", "r")
+            data = []
+
+            for i in range(int(sys.argv[1])+1):
+                data = f.readline().split(";")
+
+            img_url = data[1].strip()
+            print(extract_text_from_url(img_url))
+        except:
+            print("wrong parameter")
     else:
-        print("Invalid choice. Please enter 'url' or 'file'.")
+        choice = input("Press 1 to process an image from a URL or 2 to process a local image file: ").strip().lower()
+        if choice == '1':
+            img_url = input("Enter image URL: ").strip()
+            print(extract_text_from_url(img_url))
+        elif choice == '2':
+            file_path = input("Enter the local image file path: ").strip()
+            print(extract_text_from_file(file_path))
+        else:
+            print("Invalid choice. Please enter 'url' or 'file'.")
 
 if __name__ == "__main__":
     main()
