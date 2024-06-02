@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import requests
+from scipy.ndimage import label
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 from io import BytesIO
 import pytesseract
@@ -57,16 +58,49 @@ def preprocess_image2(img):
     # use binary thresholding to make the text more distinguishable
     img = img.point(lambda p: 255 if p > text_color else 0)
     img.show()
-    return  img
+    return img
+
+
+def preprocess_noisy(img):
+    return img
+    img = img.convert('L')
+
+    # binary thresholding
+    img = img.point(lambda p: 255 if p > 128 else 0)
+
+    inverted = ImageOps.invert(img)
+    img_array = np.array(inverted)
+
+    components, num_components = label(img_array)
+    component_sizes = np.bincount(components.ravel())
+
+    # threshold for noise removal
+    min_size = 25
+
+    filtered_components = np.zeros_like(img_array)
+
+    # discard components with size smaller than min_Size
+    for i in range(1, num_components + 1):
+        if component_sizes[i] >= min_size:
+            # components == i creates boolean mask
+            filtered_components[components == i] = 255
+
+    img = np.invert(filtered_components)
+
+    img = Image.fromarray(img)
+    img.show()
+    return img
+
 
 def preprocess_image(img):
-    #  choose which one to choose
-    return preprocess_image1(img)
-    # return preprocess_image2(img)
-    # return preprocess_image3(img)
+    # choose one enhancement function from below
+    # return preprocess_image1(img)
+    # return  preprocess_image2(img)
+    return preprocess_noisy(img)
 
-# function below is not ours. It has not been written by any member of our tema
-# the function is taken from Stackoverflow https://stackoverflow.com/questions/57964634/python-opencv-skew-correction-for-ocr
+
+# function below is not ours. It has not been written by any member of our team
+# function taken from Stackoverflow https://stackoverflow.com/questions/57964634/python-opencv-skew-correction-for-ocr
 def correct_skew(image, delta=1, limit=5):
     def determine_score(arr, angle):
         data = inter.rotate(arr, angle, reshape=False, order=0)
